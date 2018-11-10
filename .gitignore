@@ -1,0 +1,15 @@
+.idea
+logdir*
+*.py[cod]
+datasets
+.DS_Store
+outputs
+__*
+hparams
+tools
+
+
+data/
+datasets/
+logs/
+venv/

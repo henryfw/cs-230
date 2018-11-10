@@ -1,0 +1,10 @@
+tensorflow-gpu >= 1.8
+numpy >= 1.11.1
+librosa
+joblib == 0.11.0
+pyyaml
+soundfile
+pydub
+tqdm
+git+https://github.com/wookayin/tensorflow-plot.git@master
+pip install --upgrade git+https://github.com/tensorpack/tensorpack.git
