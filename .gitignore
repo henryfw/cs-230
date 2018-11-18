@@ -5,7 +5,6 @@ datasets
 .DS_Store
 outputs
 __*
-hparams
 tools
 
 
@@ -13,3 +12,4 @@ data/
 datasets/
 logs/
 venv/
+raw/
