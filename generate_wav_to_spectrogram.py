@@ -1,6 +1,8 @@
 from scipy import signal
 import numpy as np
 import matplotlib.pyplot as plt
+import threading
+import glob
 
 import scipy.io.wavfile as wav
 from numpy.lib import stride_tricks
@@ -8,41 +10,69 @@ from numpy.lib import stride_tricks
 from audio import spec2wav, wav2spec, read_wav, write_wav
 
 
-def log_specgram(audio, sample_rate, window_size=20,
-                 step_size=10, eps=1e-10):
-    nperseg = int(round(window_size * sample_rate / 1e3))
-    noverlap = int(round(step_size * sample_rate / 1e3))
-    freqs, times, spec = signal.spectrogram(audio,
-                                    fs=sample_rate,
-                                    window='hann',
-                                    nperseg=nperseg,
-                                    noverlap=noverlap,
-                                    detrend=False)
-    return freqs, times, spec
-    # return freqs, times, np.log(spec.T.astype(np.float32) + eps)
-
-
-
-if __name__ == '__main__':
-    # plotstft('/Users/henry/PycharmProjects/cs230/text/raw/140_8.wav')
-
+def process_files(files, thread_id):
     sr = 22050
     n_fft = 512
     win_length = 400
     hop_length = 80
-    duration = 2 # sec
+    duration = 2  # sec
 
-    wav = read_wav( 'raw/140_8.wav', sr, duration )
-    spec, _ = wav2spec(wav, n_fft, win_length, hop_length, False)
+    counter = 0
 
-    converted_wav = spec2wav(spec, n_fft, win_length, hop_length, 600)
+    data_x = []
+    data_y1 = []
+    data_y2 = []
 
-    write_wav(converted_wav, sr, 'a.wav')
+    for file in files:
+
+        wav_x = read_wav(file, sr, duration)
+        wav_y1 = read_wav(file.replace("wav_x", "wav_y1"), sr, duration)
+        wav_y2 = read_wav(file.replace("wav_x", "wav_y2"), sr, duration)
+        spec_x, _ = wav2spec(wav_x, n_fft, win_length, hop_length, False)
+        spec_y1, _ = wav2spec(wav_y1, n_fft, win_length, hop_length, False)
+        spec_y2, _ = wav2spec(wav_y2, n_fft, win_length, hop_length, False)
+
+        data_x.append(spec_x)
+        data_y1.append(spec_y1)
+        data_y2.append(spec_y2)
+
+        counter += 1
+        print(file + " done in " + str(thread_id) + " " + str(counter))
 
 
-    plt.pcolormesh(spec)
-    plt.ylabel('Frequency')
-    plt.xlabel('Time')
-    plt.savefig("a.png")
+        # converted_wav = spec2wav(spec, n_fft, win_length, hop_length, 600)
+        # write_wav(converted_wav, sr, 'a.wav')
+        # plt.pcolormesh(spec)
+        # plt.ylabel('Frequency')
+        # plt.xlabel('Time')
+        # plt.savefig("a.png")
+
+    np.save("data_x_" + str(thread_id), data_x)
+    np.save("data_y1_" + str(thread_id), data_y1)
+    np.save("data_y2_" + str(thread_id), data_y2)
+
+if __name__ == '__main__':
+    num_threads = 6
+    thread_pointers = [i for i in range(num_threads)]
+
+    files = glob.glob("/Users/henry/Downloads/aclImdb/data/*.txt")
+
+    print("Processing " + str(len(files)) + " files:")
+
+    files_per_part = int( len(files)  / num_threads )
+
+    for i in range(num_threads):
+        some_files = files[i * files_per_part : (i+1) * files_per_part]
+        thread_pointers[i] = threading.Thread(target=process_files, args=(some_files, i))
+
+
+    for i in range(num_threads):
+        thread_pointers[i].start()
+
+    for i in range(num_threads):
+        thread_pointers[i].join()
+
+
+    print("Done!")
 
 

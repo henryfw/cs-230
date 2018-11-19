@@ -6,11 +6,10 @@ import glob
 
 # moving all data to one dir cd ~/Downloads/aclImdb/test/neg; tar -cf - * | (cd ~/Downloads/aclImdb/data; tar -xf -)
 
-# break text into sentences of min length. crops off long sentences
-def split_file(text):
-    pass
 
 def process_files(files, thread_id):
+    counter = 0
+
     for file in files :
         cleaned_text = ""
         cleaned_file = file.replace('/Users/henry/Downloads/aclImdb/data/', '/Volumes/USB/cs230/data_processed/')
@@ -21,18 +20,19 @@ def process_files(files, thread_id):
 
         if (len(cleaned_text) > 30):
             with open(cleaned_file, 'w+') as fw:
-                    fw.write(cleaned_text)
+                    fw.write(cleaned_text[:100]) # first 100 char, we only need 2 seconds of wav
 
             output_file_1 = file.replace('/Users/henry/Downloads/aclImdb/data/', '/Volumes/USB/cs230/wav_x/').replace(".txt", ".wav")
             output_file_2 = file.replace('/Users/henry/Downloads/aclImdb/data/', '/Volumes/USB/cs230/wav_y1/').replace(".txt", ".wav")
             output_file_3 = file.replace('/Users/henry/Downloads/aclImdb/data/', '/Volumes/USB/cs230/wav_y2/').replace(".txt", ".wav")
 
 
-            subprocess.check_output(['say', '--file-format=WAVE', '--channels=1', '--data-format=LEF32@22050', '-f', file, '-o', output_file_1, '-v', 'Ava', '-r', '175'])
-            subprocess.check_output(['say', '--file-format=WAVE', '--channels=1', '--data-format=LEF32@22050', '-f', file, '-o', output_file_2, '-v', 'Kate', '-r', '175'])
-            subprocess.check_output(['say', '--file-format=WAVE', '--channels=1', '--data-format=LEF32@22050', '-f', file, '-o', output_file_3, '-v', 'Serena', '-r', '175'])
+            subprocess.check_output(['say', '--file-format=WAVE', '--channels=1', '--data-format=LEF32@22050', '-f', cleaned_file, '-o', output_file_1, '-v', 'Ava', '-r', '175'])
+            subprocess.check_output(['say', '--file-format=WAVE', '--channels=1', '--data-format=LEF32@22050', '-f', cleaned_file, '-o', output_file_2, '-v', 'Kate', '-r', '175'])
+            subprocess.check_output(['say', '--file-format=WAVE', '--channels=1', '--data-format=LEF32@22050', '-f', cleaned_file, '-o', output_file_3, '-v', 'Serena', '-r', '175'])
 
-        print(file + " done in " + str(thread_id))
+        counter += 1
+        print(file + " done in " + str(thread_id) + " " + str(counter))
 
 
 
