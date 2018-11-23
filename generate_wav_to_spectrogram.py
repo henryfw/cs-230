@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import threading
 import glob
 import random
+import scipy.misc
 
 from audio import spec2wav, wav2spec, read_wav, write_wav
 
@@ -18,60 +19,38 @@ def process_files(files, thread_id):
     counter = 0
 
     data_x = []
-    data_y1 = []
-    data_y2 = []
+    data_x_reduced_2 = []
+    data_x_reduced_3 = []
 
     for file in files:
-
         counter += 1
         print("Reading: " + file + " " + str(counter) + " " + str(thread_id))
 
         wav_x = read_wav(file, sr, duration)
-        # wav_y1 = read_wav(file.replace("wav_x", "wav_y1"), sr, duration)
-        wav_y2 = read_wav(file.replace("wav_x", "wav_y2"), sr, duration)
         spec_x, _ = wav2spec(wav_x, n_fft, win_length, hop_length, False)
-        # spec_y1, _ = wav2spec(wav_y1, n_fft, win_length, hop_length, False)
-        spec_y2, _ = wav2spec(wav_y2, n_fft, win_length, hop_length, False)
 
-        data_x.append(spec_x)
-        # data_y1.append(spec_y1)
-        data_y2.append(spec_y2)
+        spec_x_reshaped = spec_x.reshape((spec_x.shape[0], spec_x.shape[1], 1))
 
+        r2 = scipy.misc.imresize(spec_x, (int(spec_x.shape[0]/2), int(spec_x.shape[1]/2)), 'bilinear')
+        r2 = r2.reshape((r2.shape[0], r2.shape[1], 1))
+        r3 = scipy.misc.imresize(spec_x, (int(spec_x.shape[0]/3), int(spec_x.shape[1]/3)), 'nearest')
+        r3 = r3.reshape((r3.shape[0], r3.shape[1], 1))
 
-    np.save("G:/cs230/np_{}sec/data_x_".format(duration) + str(thread_id), data_x)
-    # np.save("G:/cs230/np_{}sec/data_y1_".format(duration) + str(thread_id), data_y1)
-    np.save("G:/cs230/np_{}sec/data_y2_".format(duration) + str(thread_id), data_y2)
+        data_x.append(spec_x_reshaped)
+        data_x_reduced_2.append(r2)
+        data_x_reduced_3.append(r3)
+
+    np.save("/Volumes/USB/cs230/spec_{}_{}sec/data_x".format(thread_id, duration), data_x)
+    np.save("/Volumes/USB/cs230/spec_{}_{}sec/data_x_reduced_2".format(thread_id, duration), data_x_reduced_2)
+    np.save("/Volumes/USB/cs230/spec_{}_{}sec/data_x_reduced_3".format(thread_id, duration), data_x_reduced_3)
+
 
 if __name__ == '__main__':
 
+    for i in range(1, 7):
+        files = glob.glob("H:/cs230/wav_{}/*".format(i))
 
-    files = [ file.replace("data_processed", "wav_x").replace(".txt", ".wav")
-              for file in  glob.glob("H:/cs230/data_processed/*.txt") ]
-    random.shuffle(files)
-
-    print("Processing " + str(len(files)) + " files:")
-
-    # files_per_part = 3000
-    # for i in range(0, len(files), files_per_part):
-    #     some_files = files[i : i + files_per_part]
-    #     process_files(some_files, i)
-
-    num_threads = 10
-    thread_pointers = [i for i in range(num_threads)]
-
-    files_per_part = 3100
-
-    for i in range(num_threads):
-        some_files = files[i * files_per_part : (i+1) * files_per_part]
-        thread_pointers[i] = threading.Thread(target=process_files, args=(some_files, i))
-
-
-    for i in range(num_threads):
-        thread_pointers[i].start()
-
-    for i in range(num_threads):
-        thread_pointers[i].join()
-
+        process_files(files, i)
 
 
     # converted_wav = spec2wav(spec, n_fft, win_length, hop_length, 600)
