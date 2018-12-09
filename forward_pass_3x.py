@@ -14,10 +14,12 @@ if __name__ == '__main__':
     hop_length = 80
     duration = 2 # sec
 
+    img_x, img_y = 50, 30
+
     # plt.savefig("a-output.png")
     x_test = np.load("C:/cs230/np_2sec_resized/x_test.npy")/244
     x_test = x_test.reshape(x_test.shape[0:3])
-    x_test = np.swapaxes(x_test, 1, 2)[:,:,0:30]
+    x_test = np.swapaxes(x_test, 1, 2)[:,0:img_x,0:img_y]
 
 
     index_to_use = 0
@@ -32,7 +34,7 @@ if __name__ == '__main__':
 
     y_test = np.load("C:/cs230/np_2sec_resized/y_test.npy") / 244
     y_test = y_test.reshape(y_test.shape[0:3])
-    y_test = np.swapaxes(y_test, 1, 2)[:,:,0:30]
+    y_test = np.swapaxes(y_test, 1, 2)[:,0:img_x,0:img_y]
     plt.pcolormesh(np.swapaxes(y_test[index_to_use], 0, 1))
     plt.ylabel('Frequency')
     plt.xlabel('Time')
@@ -40,9 +42,9 @@ if __name__ == '__main__':
 
 
 
-    model = load_model('models/run_1543789599.928199_3447.h5')
+    model = load_model('models/run_1544044715.6602554_3001.h5')
     prediction = model.predict( x_test[index_to_use:index_to_use+1,:,:] )
-    prediction = prediction[index_to_use]
+    prediction = prediction[0]
     prediction = np.nan_to_num(prediction)
     spec = np.swapaxes(prediction, 0, 1)
 

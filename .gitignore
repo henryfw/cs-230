@@ -7,9 +7,10 @@ outputs
 __*
 tools
 
-
+models/
 data/
 datasets/
 logs/
 venv/
 raw/
+images/
