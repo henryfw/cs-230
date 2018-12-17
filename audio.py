@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
 
+
 from scipy import signal
 from pydub import AudioSegment
 import os
@@ -370,3 +371,7 @@ def wav2mfcc(wav, sr, n_fft, win_length, hop_length, n_mels, n_mfccs, preemphasi
         mfccs = mfccs.T  # (t, n_mfccs)
 
     return mfccs
+
+
+
+# This file is copied from https://github.com/andabi/deep-voice-conversion/blob/master/audio.py
