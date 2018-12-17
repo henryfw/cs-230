@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.misc
 import sys
-
+import pickle
 
 def resize(data):
     new_data = []
