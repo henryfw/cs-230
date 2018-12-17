@@ -1,0 +1,123 @@
+1544458280.6430151
+280x250
+1 lstm(1024)
+admn
+mae
+- bad results, a horizontal dashed line after 120 epoch
+
+
+1544474832.0996256
+50x50
+1 lstm(1024)
+adam
+msle
+- 0.45 acc after 350 epoch
+- after 30 epoch no good. after 350 epoch kinda blurry lines
+
+
+
+
+1544479865.1239407
+50x50
+1 lstm(1024)
+adam
+mae
+- 0.43 acc after 350 epoch
+- more crispy than msle. still kinda blurry
+
+
+1544484559.3206449
+50x50
+1 lstm(1024)
+rmsprop
+mae
+- trains faster than adam
+- more crisp results
+
+
+
+1544474832.0996256
+50x50
+2x lstm(1024)
+rmsprop
+mae
+- no initial drop in training
+- noticably better performance after 350 epoch
+
+
+1544496682.9146726
+50x50
+2x lstm(1024)
+rmsprop
+mae
+2 FC
+- better than 3 FC, which is above
+
+1544499891.7894537
+50x50
+2x lstm(1024)
+rmsprop
+mae
+1 FC
+- very bad results
+
+1544509330.2783716
+50x250
+- same as 50x50 above
+
+1544512225.6659045
+250x250
+2x lstm(1024)
+rmsprop
+mae
+2 FC
+- acc too low, i think not enough parameters to store info or i didn't train long enough
+
+
+
+1544989618.7144566
+50x50
+2x gru(1024)
+rmsprop
+mae
+2 FC
+- not as good as lstm
+
+
+1544994156.7466836
+50x50
+2x lstm(1024)
+rmsprop
+mae
+2 FC
+no skip conn
+- bad results
+
+
+1544996808.815913
+50x50
+2x lstm(1024)
+rmsprop
+mae
+2 FC
+skip conn to 2nd rnn only
+- works, slower
+
+
+1545004546.1187928
+50x50
+2x lstm(1024)
+rmsprop
+mae
+2 FC
+skip conn to fc only
+- works, slower
+
+
+1545007959.452422
+50x50
+1x lstm(1024)
+rmsprop
+mae
+2 FC
+-

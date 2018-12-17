@@ -25,12 +25,12 @@ test_size = 5000
 
 skip_count = 10000
 
-img_x, img_y = 150, 50 # original is 300, 257
+img_x, img_y = 50, 50 # original is 300, 257
 
-data1 = np.load("C:/cs230/data1_with_dup_full.npy")
-data2 = np.load("C:/cs230/data2_with_dup_full.npy")
-# data1 = np.load("H:/data/data1_with_dup_0.npy")
-# data2 = np.load("H:/data/data2_with_dup_0.npy")
+# data1 = np.load("C:/cs230/data1_with_dup_full.npy")
+# data2 = np.load("C:/cs230/data2_with_dup_full.npy")
+data1 = np.load("H:/data/data1_with_dup_0.npy")
+data2 = np.load("H:/data/data2_with_dup_0.npy")
 
 x_train = data1[skip_count:-test_size,:img_x,:img_y]
 x_test = data1[-test_size:,:img_x,:img_y]
@@ -44,9 +44,9 @@ print('x_train shape:', x_train.shape) # x_train shape: (40151, img_x, img_y)
 input_shape = (img_x, img_y)
 
 input1 = Input(shape=input_shape)
-x1 = LSTM(units=1024, return_sequences=True, dropout=0.4, activation='tanh' )(input1)
+x1 = GRU(units=1024, return_sequences=True, dropout=0.4, activation='tanh' )(input1)
 input2 = concatenate([x1, input1], axis=2)
-x2 = LSTM(units=1024, return_sequences=True, dropout=0.4, activation='tanh' )(input2)
+x2 = GRU(units=1024, return_sequences=True, dropout=0.4, activation='tanh' )(input2)
 input3 = concatenate([x2, x1, input1], axis=2)
 d1 = TimeDistributed(Dense(2048, activation = 'tanh'))(input3)
 d1 = TimeDistributed(Dropout(0.4))(d1)

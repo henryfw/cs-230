@@ -8,8 +8,6 @@ __*
 tools
 
 models/
-data/
-datasets/
 logs/
 venv/
 raw/
